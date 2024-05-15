@@ -44,14 +44,14 @@ circ_real=np.array([1]) # circulation of the real vortices
 circ_images=[]
 y_images=[]
 z_images=[]
-
+eps=0.01 # core size of the vortex, for display purposes
 
 
 #getting the position and circulation of the image vortices
 y_images, z_images, circ_images=vort_bib.vortYposition(y_real, z_real,3,L, circ_real)
 z_ground_images, circ_ground_images = vort_bib.vortZposition(z_real,z_images, circ_real, circ_images)
 # Getting the velocity indued by all the vortices
-Uy, Uz=vort_bib.veloc_field(y_images, z_images, y_real, z_real ,circ_images, circ_real, y_mesh, z_mesh)
+Uy, Uz=vort_bib.veloc_field(y_images, z_images, y_real, z_real ,circ_images, circ_real, y_mesh, z_mesh, eps)
 
 # U_magn=
 ############# Figures
@@ -72,9 +72,15 @@ Uy_quiver=Uy
 Uz_quiver=Uz
 Umagn=np.sqrt(Uy**2+Uz**2)
 
-threshold=5
+threshold=20
 
-Uy_quiver[Umagn>threshold]=threshold
-Uz_quiver[Umagn>threshold]=threshold
+Uy_quiver[Umagn>threshold]=0
+Uz_quiver[Umagn>threshold]=0
 
-plt.quiver(y,z,Uy_quiver,Uz_quiver)
+plt.quiver(y,z, Uy_quiver,Uz_quiver)
+
+
+
+
+
+
