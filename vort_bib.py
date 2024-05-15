@@ -50,6 +50,7 @@ def vortZposition(z_real,z_images, Circ_real, Circ_images):
     if (type(z_images) == list) :
         z_ground_images=np.zeros((len(z_real)))
         Circ_ground_images=np.zeros((len(z_real)))
+        y_ground_images=np.zeros((len(z_real)))
         
         z_ground_images[0:len(z_real)]= -1*z_real   # Vertical images of the real vortices
         Circ_ground_images[0:len(z_real)]= -1*Circ_real
@@ -61,13 +62,13 @@ def vortZposition(z_real,z_images, Circ_real, Circ_images):
         z_ground_images[0:len(z_real)]= -1*z_real   # Vertical images of the real vortices
         Circ_ground_images[0:len(z_real)]= -1*Circ_real
 
-
         for i in range(len(z_real)):                # Vertical images of the horizontal images 
             z_ground_images[len(z_real)+i*len(z_images[0,:]) : len(z_real)+(i+1)*len(z_images[0,:]) ] = -1*z_images[i,:]
             Circ_ground_images[len(z_real)+i*len(z_images[0,:]) : len(z_real)+(i+1)*len(z_images[0,:]) ] = -1*Circ_images[i,:]      
             
-    print('\n\n Position of the ground images\n', z_ground_images)    
-    print('\n\n Circulation of the ground images\n', Circ_ground_images)    
+
+    print('\n\n Position of the ground images\n', z_ground_images)
+    print('\n\n Circulation of the ground images\n', Circ_ground_images)
     
     return z_ground_images, Circ_ground_images
         
@@ -88,13 +89,14 @@ def veloc_field(y_imag, z_imag, y_real, z_real, circulation, circulation_real, y
         for j in range(len(y_mesh[0,:])):
 
             #Adding the contribution of the real vortices
-            Uy[i,j]=np.sum(circulation_real*(z_mesh[i,j]-z_real)/((y_mesh[i,j]-y_real)**2+(z_mesh[i,j]-z_real)**2))
-            Uz[i,j]=np.sum(circulation_real*(y_mesh[i,j]-y_real)/((y_mesh[i,j]-y_real)**2+(z_mesh[i,j]-z_real)**2))
+            Uy[i,j]=np.sum(circulation_real*(z_mesh[i,j]-z_real)/((y_mesh[i,j]-y_real)**2+(z_mesh[i,j]-z_real)**2))+np.sum(-1*circulation_real*(z_mesh[i,j]+z_real)/((y_mesh[i,j]-y_real)**2+(z_mesh[i,j]+z_real)**2))
+            Uz[i,j]=np.sum(circulation_real*(y_mesh[i,j]-y_real)/((y_mesh[i,j]-y_real)**2+(z_mesh[i,j]-z_real)**2))+np.sum(-1*circulation_real*(y_mesh[i,j]-y_real)/((y_mesh[i,j]-y_real)**2+(z_mesh[i,j]+z_real)**2))
             
-            #Then the contribution of the image of the real vortices
+            #Then the contribution of the lateral images
             for k in range(N_realVortex): #supposed to be the number of vortices
-                Uy[i,j]+=np.sum(-1*G[k,:]*(z_mesh[i,j]-z_imag[k,:])/((y_mesh[i,j]-y_imag[k,:])**2+(z_mesh[i,j]-z_imag[k,:])**2))
-                Uz[i,j]+=np.sum(G[k,:]*(y_mesh[i,j]-y_imag[k,:])/((y_mesh[i,j]-y_imag[k,:])**2+(z_mesh[i,j]-z_imag[k,:])**2))
+                Uy[i,j]+=np.sum(-1*G[k,:]*(z_mesh[i,j]-z_imag[k,:])/((y_mesh[i,j]-y_imag[k,:])**2+(z_mesh[i,j]-z_imag[k,:])**2)) +np.sum(G[k,:]*(z_mesh[i,j]+z_imag[k,:])/((y_mesh[i,j]-y_imag[k,:])**2+(z_mesh[i,j]+z_imag[k,:])**2))
+                Uz[i,j]+=np.sum(G[k,:]*(y_mesh[i,j]-y_imag[k,:])/((y_mesh[i,j]-y_imag[k,:])**2+(z_mesh[i,j]-z_imag[k,:])**2)) +np.sum(-1*G[k,:]*(y_mesh[i,j]-y_imag[k,:])/((y_mesh[i,j]-y_imag[k,:])**2+(z_mesh[i,j]+z_imag[k,:])**2))
+
 
 
     # Uy=np.sum(circulation_real*(z_mesh-z_real)/((y_mesh-y_real)**2+(z_mesh-z_real)**2))

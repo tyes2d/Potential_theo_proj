@@ -41,6 +41,7 @@ circ_real=np.array([1]) # circulation of the real vortices
 # Default value to trigger a condition: if type(circ/z_images)==list --> No walls #
 ###################################################################################
 circ_images=[]
+y_images=[]
 z_images=[]
 
 
@@ -49,5 +50,5 @@ z_images=[]
 y_images, z_images, circ_images=vort_bib.vortYposition(y_real, z_real,3,L, circ_real)
 z_ground_images, circ_ground_images = vort_bib.vortZposition(z_real,z_images, circ_real, circ_images)
 # Getting the velocity indued by all the vortices
-# Uy, Uz=vort_bib.veloc_field(Y_Vortex, Z_Vortex, y_real, z_real ,Circ_Vortex, circ_real, y_mesh, z_mesh)
+Uy, Uz=vort_bib.veloc_field(y_images, z_images, y_real, z_real ,circ_images, circ_real, y_mesh, z_mesh)
 
