@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 """
 Spyder Editor
 
@@ -7,6 +7,7 @@ This is a temporary script file.
 
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
 import math
 import os
 import vort_bib
@@ -34,7 +35,7 @@ j_v=np.argmin(np.abs(z_mesh[:,0]-h))
 
 
 y_real=np.array([0]) # position of the real vortices
-z_real=np.array([0.5]) # position of the real vortices
+z_real=np.array([0.15]) # position of the real vortices
 circ_real=np.array([1]) # circulation of the real vortices 
 
 ###################################################################################
@@ -52,3 +53,28 @@ z_ground_images, circ_ground_images = vort_bib.vortZposition(z_real,z_images, ci
 # Getting the velocity indued by all the vortices
 Uy, Uz=vort_bib.veloc_field(y_images, z_images, y_real, z_real ,circ_images, circ_real, y_mesh, z_mesh)
 
+# U_magn=
+############# Figures
+
+plt.figure(1, figsize=(15,4))
+plt.contourf(y,z,np.sqrt(Uy**2+Uz**2),40)
+plt.hlines(0,-L,L,colors='k',linestyle='solid',linewidth=2)
+plt.vlines(-L,0,H,colors='k',linestyle='solid',linewidth=2)
+plt.vlines(L,0,H,colors='k',linestyle='solid',linewidth=2)
+plt.colorbar()
+
+
+
+
+plt.figure(2,figsize=(15,4))
+
+Uy_quiver=Uy
+Uz_quiver=Uz
+Umagn=np.sqrt(Uy**2+Uz**2)
+
+threshold=5
+
+Uy_quiver[Umagn>threshold]=threshold
+Uz_quiver[Umagn>threshold]=threshold
+
+plt.quiver(y,z,Uy_quiver,Uz_quiver)

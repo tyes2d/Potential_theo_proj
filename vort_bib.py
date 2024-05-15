@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Thu May  2 12:05:25 2024
 
@@ -79,7 +77,6 @@ def veloc_field(y_imag, z_imag, y_real, z_real, circulation, circulation_real, y
                                              Uz=Σ_i(Gamma_i/(2.pi)*(y-yc_i)/((z-zc_i)^2+(y-yc_i)^2)'''
 
     N_realVortex=len(circulation_real) #number of real vortex
-
     Uy=np.zeros_like(y_mesh)
     Uz=np.zeros_like(y_mesh)
 
@@ -116,4 +113,3 @@ def veloc_field(y_imag, z_imag, y_real, z_real, circulation, circulation_real, y
 
 
     #for k in range(len(position[:,0])):
-
