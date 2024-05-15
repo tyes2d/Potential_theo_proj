@@ -33,13 +33,13 @@ i_v=np.argmin(np.abs(y_mesh[0,:]-0))
 j_v=np.argmin(np.abs(z_mesh[:,0]-h))
 
 
-y_real=np.array([-0.5, -0.2, 0.3, 0.5]) # position of the real vortices
-z_real=np.array([0.2, 0.3, 0.2, 0.3]) # position of the real vortices
-circ_real=np.array([1,1,3,1]) # circulation of the real vortices 
+y_real=np.array([0]) # position of the real vortices
+z_real=np.array([0.5]) # position of the real vortices
+circ_real=np.array([1]) # circulation of the real vortices 
 
 #getting the position and circulation of the image vortices
-Y_Vortex, Z_Vortex, Circ_Vortex=vort_bib.vortYposition(y_real, z_real,Ny,L, circ_real)
-
+Y_Vortex, Z_Vortex, Circ_Vortex=vort_bib.vortYposition(y_real, z_real,3,L, circ_real)
+Z_images, Circ_images = vort_bib.vortZposition(z_real,Z_Vortex, circ_real, Circ_Vortex)
 # Getting the velocity indued by all the vortices
-Uy, Uz=vort_bib.veloc_field(Y_Vortex, Z_Vortex, y_real, z_real ,Circ_Vortex, circ_real, y_mesh, z_mesh)
+# Uy, Uz=vort_bib.veloc_field(Y_Vortex, Z_Vortex, y_real, z_real ,Circ_Vortex, circ_real, y_mesh, z_mesh)
 

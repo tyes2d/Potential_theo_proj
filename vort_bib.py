@@ -13,33 +13,54 @@ import math
 import os
 
 
-def vortYposition(y_real, z_real, N_imag, L, circ):
+######### Coordinates Y & Z of the wall image vortex ###########
+def vortYposition(y_real, z_real, N_imag, L, Circ_real):
     
     if type(y_real)==float: y_real=np.array([y_real])
     if type(z_real)==float: z_real=np.array([z_real])
 
-    y=np.zeros((len(y_real), 2*N_imag)) #Position of the vortex
-    z=np.zeros((len(z_real), 2*N_imag)) #Position of the vortex
-    Circ_images=np.zeros_like(y)        #Circulation of the vortex
+    y_images=np.zeros((len(y_real), 2*N_imag)) #Position of the vortex
+    z_images=np.zeros((len(z_real), 2*N_imag)) #Position of the vortex
+    Circ_images=np.zeros_like(y_images)        #Circulation of the vortex
     
     for j in range(len(y_real)):
         y_temp=np.array(())
-        for i in range(N_imag):
+        for i in range(1,N_imag+1):
             y_left=-2*i*L+(-1)**i*y_real[j]
             y_right=2*i*L+(-1)**i*y_real[j]
             y_temp=np.append(y_left, y_temp) #left-side vortex
             y_temp=np.append(y_temp,y_right) #right-side vortex
-            Circ_images[j,int(len(Circ_images[j,:])/2)+i]=(-1)**i*circ[j]
-            z[j,:]=-1*z_real[j]
+            Circ_images[j,int(len(Circ_images[j,:])/2)+i-1]=(-1)**i*Circ_real[j]
+            z_images[j,:]=z_real[j]
 
         Circ_images[j,:int(len(Circ_images[j,:])/2)]=np.flip(Circ_images[j,int(len(Circ_images[j,:])/2):])
         print(len(y_temp))
-        y[j]=y_temp
+        y_images[j]=y_temp
         
-    print('\n\n Position of the vortices\n', y)    
+    print('\n\n Position of the vortices\n', y_images)    
     print('\n\n Circulation of the vortices\n', Circ_images)    
     
-    return y, z, Circ_images
+    return y_images, z_images, Circ_images
+
+
+######### Coordinates Z of the ground images of the real and wall-imaged vortices ###########
+def vortZposition(z_real,z_images, Circ_real, Circ_images):
+    
+    # Initialize the z and circulation arrays for ground images for both the real vortices and their lateral images
+    z_ground_images=np.zeros((len(z_real)) + len(z_images[0,:])*len(z_images[:,0])*(type(z_images)==np.ndarray)  )
+    Circ_ground_images=np.zeros((len(z_real)) + len(z_images[0,:])*len(z_images[:,0])*(type(z_images)==np.ndarray) )
+    
+    z_ground_images[0:len(z_real)-1]= -1*z_real   # Vertical images of the real vortices
+    Circ_ground_images[0:len(z_real)-1]= -1*Circ_real
+    
+    for i in range(len(z_real)):                # Vertica images of the horizontal images 
+        z_ground_images[len(z_real)+i*len(z_images[0,:]) : len(z_real)+(i+1)*len(z_images[0,:]) ] = -1*z_images[i,:]
+        Circ_ground_images[len(z_real)+i*len(z_images[0,:]) : len(z_real)+(i+1)*len(z_images[0,:]) ] = -1*Circ_images[i,:]      
+    
+    print('\n\n Position of the ground images\n', z_ground_images)    
+    print('\n\n Circulation of the ground images\n', Circ_ground_images)    
+    
+    return z_ground_images, Circ_ground_images
         
 
 def veloc_field(y_imag, z_imag, y_real, z_real, circulation, circulation_real, y_mesh, z_mesh):
@@ -79,7 +100,7 @@ def veloc_field(y_imag, z_imag, y_real, z_real, circulation, circulation_real, y
 
     return Uy, Uz
 
-'''Problem is the triple loop, a bit heavy '''
+# '''Problem is the triple loop, a bit heavy '''
 
 
 
