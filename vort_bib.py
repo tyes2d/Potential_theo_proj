@@ -47,16 +47,25 @@ def vortYposition(y_real, z_real, N_imag, L, Circ_real):
 def vortZposition(z_real,z_images, Circ_real, Circ_images):
     
     # Initialize the z and circulation arrays for ground images for both the real vortices and their lateral images
-    z_ground_images=np.zeros((len(z_real)) + len(z_images[0,:])*len(z_images[:,0])*(type(z_images)==np.ndarray)  )
-    Circ_ground_images=np.zeros((len(z_real)) + len(z_images[0,:])*len(z_images[:,0])*(type(z_images)==np.ndarray) )
-    
-    z_ground_images[0:len(z_real)-1]= -1*z_real   # Vertical images of the real vortices
-    Circ_ground_images[0:len(z_real)-1]= -1*Circ_real
-    
-    for i in range(len(z_real)):                # Vertica images of the horizontal images 
-        z_ground_images[len(z_real)+i*len(z_images[0,:]) : len(z_real)+(i+1)*len(z_images[0,:]) ] = -1*z_images[i,:]
-        Circ_ground_images[len(z_real)+i*len(z_images[0,:]) : len(z_real)+(i+1)*len(z_images[0,:]) ] = -1*Circ_images[i,:]      
-    
+    if (type(z_images) == list) :
+        z_ground_images=np.zeros((len(z_real)))
+        Circ_ground_images=np.zeros((len(z_real)))
+        
+        z_ground_images[0:len(z_real)]= -1*z_real   # Vertical images of the real vortices
+        Circ_ground_images[0:len(z_real)]= -1*Circ_real
+
+    else: 
+        z_ground_images=np.zeros((len(z_real)) + len(z_images[0,:])*len(z_images[:,0]))
+        Circ_ground_images=np.zeros((len(z_real)) + len(z_images[0,:])*len(z_images[:,0]))
+        
+        z_ground_images[0:len(z_real)]= -1*z_real   # Vertical images of the real vortices
+        Circ_ground_images[0:len(z_real)]= -1*Circ_real
+
+
+        for i in range(len(z_real)):                # Vertical images of the horizontal images 
+            z_ground_images[len(z_real)+i*len(z_images[0,:]) : len(z_real)+(i+1)*len(z_images[0,:]) ] = -1*z_images[i,:]
+            Circ_ground_images[len(z_real)+i*len(z_images[0,:]) : len(z_real)+(i+1)*len(z_images[0,:]) ] = -1*Circ_images[i,:]      
+            
     print('\n\n Position of the ground images\n', z_ground_images)    
     print('\n\n Circulation of the ground images\n', Circ_ground_images)    
     
