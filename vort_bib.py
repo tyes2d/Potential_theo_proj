@@ -82,33 +82,12 @@ def veloc_field(y_imag, z_imag, y_real, z_real, circulation, circulation_real, y
 
     G=circulation/(2*math.pi) #reduced circulation for more clear reading
     G_real=circulation_real/(2*math.pi)   
-    for i in range(len(y_mesh[:,0])):
-        for j in range(len(y_mesh[0,:])):
-
-            #Adding the contribution of the real vortices
-            Uy[i,j]=np.sum(G_real*(z_mesh[i,j]-z_real)/((y_mesh[i,j]-y_real)**2+(z_mesh[i,j]-z_real)**2))\
-                    +np.sum(-1*G_real*(z_mesh[i,j]+z_real)/((y_mesh[i,j]-y_real)**2+(z_mesh[i,j]+z_real)**2))
-            Uz[i,j]=np.sum(G_real*(y_mesh[i,j]-y_real)/((y_mesh[i,j]-y_real)**2+(z_mesh[i,j]-z_real)**2))\
-                    +np.sum(-1*G_real*(y_mesh[i,j]-y_real)/((y_mesh[i,j]-y_real)**2+(z_mesh[i,j]+z_real)**2))
-            
-            #Then the contribution of the lateral images
-            for k in range(N_realVortex): #supposed to be the number of vortices
-                Uy[i,j]+=np.sum(-1*G[k,:]*(z_mesh[i,j]-z_imag[k,:])/((y_mesh[i,j]-y_imag[k,:])**2+(z_mesh[i,j]-z_imag[k,:])**2))\
-                        +np.sum(G[k,:]*(z_mesh[i,j]+z_imag[k,:])/((y_mesh[i,j]-y_imag[k,:])**2+(z_mesh[i,j]+z_imag[k,:])**2))
-                Uz[i,j]+=np.sum(G[k,:]*(y_mesh[i,j]-y_imag[k,:])/((y_mesh[i,j]-y_imag[k,:])**2+(z_mesh[i,j]-z_imag[k,:])**2))\
-                        +np.sum(-1*G[k,:]*(y_mesh[i,j]-y_imag[k,:])/((y_mesh[i,j]-y_imag[k,:])**2+(z_mesh[i,j]+z_imag[k,:])**2))
-
     # for i in range(len(y_mesh[:,0])):
     #     for j in range(len(y_mesh[0,:])):
 
     #         #Adding the contribution of the real vortices
-
-    #         #Bad condition, does not take into account the eps radius back and forth
-
-
-    #         Uy[i,j]=np.sum((z_mesh[i,j]**2+y_mesh[i,j]**2>=z_real**2+y_real**2)*G_real*(z_mesh[i,j]-z_real)/((y_mesh[i,j]-y_real)**2+(z_mesh[i,j]-z_real)**2)\
-    #                       +(z_mesh[i,j]**2+y_mesh[i,j]**2<z_real**2+y_real**2)*G_real*(z_mesh[i,j]-z_real)/())\
-    #                 +np.sum(-1*G_real*(z_mesh[i,j]+z_real)/((y_mesh[i,j]-y_real)**2+(z_mesh[i,j]+z_real)**2))
+    #         Uy[i,j]=np.sum(-1*G_real*(z_mesh[i,j]-z_real)/((y_mesh[i,j]-y_real)**2+(z_mesh[i,j]-z_real)**2))\
+    #                 +np.sum(G_real*(z_mesh[i,j]+z_real)/((y_mesh[i,j]-y_real)**2+(z_mesh[i,j]+z_real)**2))
     #         Uz[i,j]=np.sum(G_real*(y_mesh[i,j]-y_real)/((y_mesh[i,j]-y_real)**2+(z_mesh[i,j]-z_real)**2))\
     #                 +np.sum(-1*G_real*(y_mesh[i,j]-y_real)/((y_mesh[i,j]-y_real)**2+(z_mesh[i,j]+z_real)**2))
             
@@ -118,6 +97,64 @@ def veloc_field(y_imag, z_imag, y_real, z_real, circulation, circulation_real, y
     #                     +np.sum(G[k,:]*(z_mesh[i,j]+z_imag[k,:])/((y_mesh[i,j]-y_imag[k,:])**2+(z_mesh[i,j]+z_imag[k,:])**2))
     #             Uz[i,j]+=np.sum(G[k,:]*(y_mesh[i,j]-y_imag[k,:])/((y_mesh[i,j]-y_imag[k,:])**2+(z_mesh[i,j]-z_imag[k,:])**2))\
     #                     +np.sum(-1*G[k,:]*(y_mesh[i,j]-y_imag[k,:])/((y_mesh[i,j]-y_imag[k,:])**2+(z_mesh[i,j]+z_imag[k,:])**2))
+
+    for i in range(len(y_mesh[:,0])):
+        for j in range(len(y_mesh[0,:])):
+
+            #Adding the contribution of the real vortices
+
+            #Bad condition, does not take into account the eps radius back and forth
+            for l in range(len(G_real)):
+                
+
+                #condition for the ground-imaged vortices
+                if ((z_mesh[i,j]+z_real[l])**2+(y_mesh[i,j]-y_real[l])**2<=eps**2):
+                    Uy[i,j]+=-1*G_real[l]*(z_mesh[i,j]-z_real[l])/((y_mesh[i,j]-y_real[l])**2+(z_mesh[i,j]-z_real[l])**2)\
+                            +G_real[l]*(z_mesh[i,j]+z_real[l])/(eps**2)
+                    Uz[i,j]+=G_real[l]*(y_mesh[i,j]-y_real[l])/((y_mesh[i,j]-y_real[l])**2+(z_mesh[i,j]-z_real[l])**2)\
+                            -1*G_real[l]*(y_mesh[i,j]-y_real[l])/(eps**2)
+                    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA_1")
+
+                #condition for the real vortices
+                elif ((z_mesh[i,j]-z_real[l])**2+(y_mesh[i,j]-y_real[l])**2<=eps**2):
+                    Uy[i,j]+=-1*G_real[l]*(z_mesh[i,j]-z_real[l])/(eps**2)\
+                            +G_real[l]*(z_mesh[i,j]-z_real[l])/((y_mesh[i,j]-y_real[l])**2+(z_mesh[i,j]-z_real[l])**2)
+                    Uz[i,j]+=G_real[l]*(y_mesh[i,j]-y_real[l])/(eps**2)\
+                            -1*G_real[l]*(y_mesh[i,j]-y_real[l])/((y_mesh[i,j]-y_real[l])**2+(z_mesh[i,j]-z_real[l])**2)
+                    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA_2")
+
+                else:
+                    Uy[i,j]+=-1*G_real[l]*(z_mesh[i,j]-z_real[l])/((y_mesh[i,j]-y_real[l])**2+(z_mesh[i,j]-z_real[l])**2)\
+                            +G_real[l]*(z_mesh[i,j]+z_real[l])/((y_mesh[i,j]-y_real[l])**2+(z_mesh[i,j]+z_real[l])**2)
+                    Uz[i,j]+=G_real[l]*(y_mesh[i,j]-y_real[l])/((y_mesh[i,j]-y_real[l])**2+(z_mesh[i,j]-z_real[l])**2)\
+                            -1*G_real[l]*(y_mesh[i,j]-y_real[l])/((y_mesh[i,j]-y_real[l])**2+(z_mesh[i,j]+z_real[l])**2)
+                    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+
+
+            #Then the contribution of the lateral images
+            for k in range(N_realVortex): #supposed to be the number of vortices
+                for l in range(len(G[0,:])):
+                    
+                    if ((z_mesh[i,j]+z_imag[k,l])**2+(y_mesh[i,j]-y_imag[k,l])**2<=eps**2):
+                        Uy[i,j]+=-1*G[k,l]*(z_mesh[i,j]-z_imag[k,l])/((y_mesh[i,j]-y_imag[k,l])**2+(z_mesh[i,j]-z_imag[k,l])**2)\
+                                +G[k,l]*(z_mesh[i,j]+z_imag[k,l])/(eps**2)
+                        Uz[i,j]+=G[k,l]*(y_mesh[i,j]-y_imag[k,l])/((y_mesh[i,j]-y_imag[k,l])**2+(z_mesh[i,j]-z_imag[k,l])**2)\
+                                +-1*G[k,l]*(y_mesh[i,j]-y_imag[k,l])/(eps**2)
+                        print("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB_1")
+
+                    elif ((z_mesh[i,j]-z_imag[k,l])**2+(y_mesh[i,j]-y_imag[k,l])**2<=eps**2):
+                        Uy[i,j]+=-1*G[k,l]*(z_mesh[i,j]-z_imag[k,l])/(eps**2)\
+                                +G[k,l]*(z_mesh[i,j]-z_imag[k,l])/((y_mesh[i,j]-y_imag[k,l])**2+(z_mesh[i,j]-z_imag[k,l])**2)
+                        Uz[i,j]+=G[k,l]*(y_mesh[i,j]-y_imag[k,l])/(eps**2)\
+                                -1*G[k,l]*(y_mesh[i,j]-y_imag[k,l])/((y_mesh[i,j]-y_imag[k,l])**2+(z_mesh[i,j]-z_imag[k,l])**2)
+                        print("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB_2")
+
+                    else :
+                        Uy[i,j]+=-1*G[k,l]*(z_mesh[i,j]-z_imag[k,l])/((y_mesh[i,j]-y_imag[k,l])**2+(z_mesh[i,j]-z_imag[k,l])**2)\
+                                +G[k,l]*(z_mesh[i,j]+z_imag[k,l])/((y_mesh[i,j]-y_imag[k,l])**2+(z_mesh[i,j]+z_imag[k,l])**2)
+                        Uz[i,j]+=G[k,l]*(y_mesh[i,j]-y_imag[k,l])/((y_mesh[i,j]-y_imag[k,l])**2+(z_mesh[i,j]-z_imag[k,l])**2)\
+                                +-1*G[k,l]*(y_mesh[i,j]-y_imag[k,l])/((y_mesh[i,j]-y_imag[k,l])**2+(z_mesh[i,j]+z_imag[k,l])**2)
+                        print("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
 
 
  #Come up with a core size for each vortices, additionnal feature ?

@@ -44,7 +44,7 @@ circ_real=np.array([1]) # circulation of the real vortices
 circ_images=[]
 y_images=[]
 z_images=[]
-eps=0.01 # core size of the vortex, for display purposes
+eps=0.1 # core size of the vortex, for display purposes
 
 
 #getting the position and circulation of the image vortices
@@ -56,12 +56,12 @@ Uy, Uz=vort_bib.veloc_field(y_images, z_images, y_real, z_real ,circ_images, cir
 # U_magn=
 ############# Figures
 
-plt.figure(1, figsize=(15,4))
-plt.contourf(y,z,np.sqrt(Uy**2+Uz**2),40)
-plt.hlines(0,-L,L,colors='k',linestyle='solid',linewidth=2)
-plt.vlines(-L,0,H,colors='k',linestyle='solid',linewidth=2)
-plt.vlines(L,0,H,colors='k',linestyle='solid',linewidth=2)
-plt.colorbar()
+# plt.figure(1, figsize=(15,4))
+# plt.contourf(y,z,np.sqrt(Uy**2+Uz**2),40)
+# plt.hlines(0,-L,L,colors='k',linestyle='solid',linewidth=2)
+# plt.vlines(-L,0,H,colors='k',linestyle='solid',linewidth=2)
+# plt.vlines(L,0,H,colors='k',linestyle='solid',linewidth=2)
+# plt.colorbar()
 
 
 
@@ -77,7 +77,7 @@ threshold=20
 Uy_quiver[Umagn>threshold]=0
 Uz_quiver[Umagn>threshold]=0
 
-plt.quiver(y,z, Uy_quiver,Uz_quiver)
+plt.quiver(y,z, Uy,Uz)
 
 
 
